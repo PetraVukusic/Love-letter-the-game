@@ -1,0 +1,295 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #0f2160;
+    /* tamno-plava pozadina */
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    color: #e0e0e0;
+}
+
+/* Vanjski okvir (tamno-plava) */
+#outer-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+}
+
+/* Unutarnji prostor sa slikom */
+#inner-content {
+    background-image: url('Spavacasoba.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    image-rendering: pixelated;
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Gornji opis */
+#top-section {
+    text-align: center;
+    padding: 20px 10px 10px;
+}
+
+#room-description {
+    background: rgba(15, 52, 96, 0.75);
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 0 #16213e;
+    box-shadow: 3px 3px 0 #dd1144, inset 1px 1px 0 #dd1144;
+}
+
+/* Petra sekcija */
+#middle-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.petra-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#petra-img {
+    width: 200px;
+    /* puno veća */
+    animation: float 3s ease-in-out infinite, sway 4s ease-in-out infinite;
+}
+
+/* Lebdenje gore–dolje */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Ljuljanje lijevo–desno */
+@keyframes sway {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+}
+
+#speech-bubble {
+    max-width: 300px;
+    padding: 18px 25px;
+    border-radius: 18px;
+    background-color: #3b40a0;
+    border: 3px solid #1a1131;
+    box-shadow: 3px 3px 0 #371b1f;
+    font-weight: 700;
+    font-size: 11px;
+    color: white;
+    text-shadow: 1px 1px 0 #7f1220;
+    text-align: center;
+    position: relative;
+}
+
+#speech-bubble::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-bottom-color: #e94560;
+    filter: drop-shadow(1px 2px 0 #7f1220);
+}
+
+/* Donji gumbi */
+#bottom-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+}
+
+.choice-btn {
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    font-size: 10px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background-color: #e94560;
+    color: white;
+    border: 3px solid #b71c30;
+    box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    user-select: none;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.15s;
+    min-width: 130px;
+}
+
+.choice-btn:hover,
+.choice-btn:focus {
+    background-color: #ff2959;
+    box-shadow: 4px 4px 0 #a71339, inset 1px 1px 0 #ff6d83;
+    outline: 3px solid #ff2959;
+    outline-offset: 2px;
+    transform: scale(1.03);
+}
+
+.choice-btn:active {
+    transform: scale(0.95);
+    box-shadow: none;
+    background-color: #b71032;
+}
+
+/* Responsivnost */
+@media (max-width: 768px) {
+    #petra-img {
+        width: 280px;
+    }
+
+    #speech-bubble {
+        font-size: 9px;
+        max-width: 90%;
+    }
+
+    #bottom-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+/* Animacija pojavljivanja teksta */
+.fade-in {
+    animation: fadeInText 0.5s ease-in-out;
+}
+
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Opcije dijaloga */
+#dialog-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.dialog-btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid #b71c30;
+    padding: 8px 10px;
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    font-size: 9px;
+    cursor: pointer;
+    border-radius: 6px;
+    box-shadow: 2px 2px 0 #7f1220;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.dialog-btn:hover {
+    background-color: #ffe6eb;
+    transform: scale(1.05);
+}
+
+.dialog-btn:active {
+    transform: scale(0.95);
+    background-color: #ffccd5;
+}
+
+/* Crni ekran za početni fade-in */
+#black-screen {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 2s ease;
+}
+
+#black-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Fade-out overlay */
+#fade-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 1s ease;
+}
+
+#fade-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* Stil za odabrani gumb koji se poveća i vizualno istakne */
+.selected-dialog-btn {
+    font-size: 1.2rem !important;
+    padding: 20px 30px !important;
+    background-color: #f5e9eb !important;
+    border: 3px solid #1c1415 !important;
+    box-shadow: 6px 6px 0 #7f1220 !important;
+    cursor: default !important;
+    pointer-events: none !important;
+    transition: all 0.5s ease;
+}

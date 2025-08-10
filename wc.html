@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WC - Damjan & Petra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        /* Osnovni reset i stilovi */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0f2160;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            color: #e0e0e0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:focus,
+        button:focus {
+            outline: 3px solid #ff2959;
+            outline-offset: 2px;
+        }
+
+        #outer-frame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        #inner-content {
+            background-image: url('Wc.jpg');
+            /* zamijeni vlastitom slikom WC-a */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            image-rendering: pixelated;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            padding: 20px;
+        }
+
+        #top-section {
+            text-align: center;
+            padding: 10px 20px 0;
+        }
+
+        #room-description {
+            background: rgba(15, 52, 96, 0.75);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 0 #16213e;
+            box-shadow: 3px 3px 0 #dd1144, inset 1px 1px 0 #dd1144;
+            min-height: 60px;
+            /* da se ne pomjera pri ispisu */
+        }
+
+        /* NOVI LAYOUT SREDIŠNJEG DIJELA */
+        #middle-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Petra lijevo-centar */
+        #petra-wrapper {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            max-width: 300px;
+        }
+
+        #petra-img {
+            width: 200px;
+            animation: float 3s ease-in-out infinite, sway 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes sway {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(5deg);
+            }
+
+            75% {
+                transform: rotate(-5deg);
+            }
+        }
+
+        #speech-bubble {
+            max-width: 320px;
+            padding: 18px 25px;
+            border-radius: 18px;
+            background-color: #3b40a0de;
+            border: 3px solid #1a1131;
+            box-shadow: 3px 3px 0 #371b1f;
+            font-weight: 700;
+            font-size: 11px;
+            color: white;
+            text-shadow: 1px 1px 0 #7f1220;
+            text-align: center;
+            position: relative;
+            transition: opacity 0.5s ease;
+        }
+
+        #speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-bottom-color: #e94560;
+            filter: drop-shadow(1px 2px 0 #7f1220);
+        }
+
+        #dialog-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dialog-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #b71c30;
+            padding: 8px 10px;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 9px;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 #7f1220;
+            transition: background-color 0.2s, transform 0.1s;
+            user-select: none;
+        }
+
+        .dialog-btn:hover {
+            background-color: #ffe6eb;
+            transform: scale(1.05);
+        }
+
+        .dialog-btn:active {
+            transform: scale(0.95);
+            background-color: #ffccd5;
+        }
+
+        .dialog-btn:disabled {
+            background-color: #ccc;
+            border-color: #999;
+            cursor: default;
+            box-shadow: none;
+            color: #666;
+        }
+
+        /* Gumb operi zube desno-centar */
+        #brush-teeth-btn {
+            position: absolute;
+            right: 20%;
+            top: 50%;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 12px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            background-color: #e94560;
+            color: white;
+            border: 4px solid #b71c30;
+            box-shadow: 5px 5px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.15s;
+            min-width: 180px;
+
+        }
+
+        #brush-teeth-btn:hover,
+        #brush-teeth-btn:focus {
+            background-color: #ff2959;
+            box-shadow: 5px 5px 0 #a71339, inset 1px 1px 0 #ff6d83;
+            outline: 3px solid #ff2959;
+            outline-offset: 2px;
+            transform: scale(1.05);
+        }
+
+        #brush-teeth-btn:active {
+            transform: scale(0.95);
+            box-shadow: none;
+            background-color: #b71032;
+        }
+
+        #brush-teeth-btn:disabled {
+            background-color: #888;
+            border-color: #555;
+            box-shadow: none;
+            cursor: default;
+            color: #ccc;
+        }
+
+        /* Donji gumbi */
+        #bottom-buttons {
+            display: flex;
+            width: 100%;
+            padding: 20px 30px;
+            box-sizing: border-box;
+        }
+
+        /* Samo jedan gumb za povratak u hodnik */
+        .choice-btn.left-btn {
+            margin-right: auto;
+        }
+
+        .choice-btn {
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #e94560;
+            color: white;
+            border: 3px solid #b71c30;
+            box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            user-select: none;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.15s;
+            min-width: 130px;
+            flex-shrink: 0;
+        }
+
+        .choice-btn:hover,
+        .choice-btn:focus {
+            background-color: #ff2959;
+            box-shadow: 4px 4px 0 #a71339, inset 1px 1px 0 #ff6d83;
+            outline: 3px solid #ff2959;
+            outline-offset: 2px;
+            transform: scale(1.03);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.95);
+            box-shadow: none;
+            background-color: #b71032;
+        }
+
+        /* Responsivnost */
+        @media (max-width: 768px) {
+            #middle-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            #brush-teeth-btn {
+                min-width: 100%;
+            }
+
+            #petra-wrapper {
+                max-width: 100%;
+                position: absolute;
+                bottom: 0;
+                left: 30%;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            #bottom-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .choice-btn.left-btn {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="outer-frame">
+        <div id="inner-content">
+
+            <!-- Gornji opis naratora za typewriter -->
+            <div id="top-section" aria-live="polite">
+                <div id="room-description" aria-live="polite"></div>
+            </div>
+
+            <!-- Srednji sadržaj: Petra lijevo, gumb desno -->
+            <div id="middle-section" aria-live="polite" aria-label="Glavni prostor za interakciju">
+                <div id="petra-wrapper" aria-hidden="true">
+                    <img id="petra-img" src="Petrahappy.png" alt="Slika vile Petra" />
+                    <div id="speech-bubble" aria-live="polite"></div>
+                    <div id="dialog-options">
+                        <button class="dialog-btn" onclick="petraReaction(1)">Ostavi me, Pero.</button>
+                        <button class="dialog-btn" onclick="petraReaction(2)">Hvala na toploj preporuci, Pero!</button>
+                        <button class="dialog-btn" onclick="petraReaction(3)">*ignoriraj*</button>
+                    </div>
+                </div>
+
+                <button id="brush-teeth-btn" aria-pressed="false" aria-label="Operi zube" disabled>Operi zube</button>
+            </div>
+
+            <!-- Donji gumb za povratak samo u hodnik -->
+            <div id="bottom-buttons" role="navigation" aria-label="Izbornik prostorija">
+                <a href="hodnik.html" class="choice-btn left-btn" role="button" tabindex="0">Vrati se u hodnik</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function typeWriterEffect(text, elementId, speed, callback) {
+            let i = 0;
+            const el = document.getElementById(elementId);
+            el.textContent = "";
+            function type() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        window.onload = () => {
+            const brushBtn = document.getElementById('brush-teeth-btn');
+            const petraWrapper = document.getElementById('petra-wrapper');
+            const speechBubble = document.getElementById('speech-bubble');
+            const dialogOptions = document.getElementById('dialog-options');
+
+            // Skini aktivnost gumba dok se ne ispiše tekst
+            brushBtn.disabled = true;
+            petraWrapper.style.display = 'none';
+
+            // Pokreni typewriter efekt naratora
+            const introText = "Nemožes se lagati da nisi najljepši momak u selu, koja te nebi htjela?";
+
+            typeWriterEffect(introText, "room-description", 40, () => {
+                // Omogući gumb za pranje zubi nakon što završi ispis
+                brushBtn.disabled = false;
+            });
+
+            let brushed = false;
+
+            function showPetra() {
+                brushBtn.disabled = true;
+                brushBtn.setAttribute('aria-pressed', 'true');
+
+                petraWrapper.style.display = 'flex';
+                petraWrapper.setAttribute('aria-hidden', 'false');
+
+                speechBubble.style.opacity = '0';
+                dialogOptions.style.display = 'flex';
+
+                setTimeout(() => {
+                    speechBubble.style.transition = 'opacity 0.5s ease';
+                    speechBubble.textContent = 'Alo prao si ih samo 2min dok zubna institucija preporucava barem 3-5min.';
+                    speechBubble.style.opacity = '1';
+                }, 50);
+            }
+
+            brushBtn.addEventListener('click', () => {
+                if (!brushed) {
+                    brushed = true;
+
+                    const roomDesc = document.getElementById('room-description');
+                    roomDesc.classList.remove('fade-in');
+                    roomDesc.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        roomDesc.textContent = 'Oprao si zube, sad ti miriše iz usta !';
+                        roomDesc.classList.remove('fade-out');
+                        roomDesc.classList.add('fade-in');
+
+                        showPetra();
+                    }, 500);
+                }
+            });
+
+            // Petra odgovara na izbor dijaloga
+            window.petraReaction = function (choice) {
+                const buttons = dialogOptions.querySelectorAll('button');
+                let message = "";
+
+                buttons.forEach((btn, i) => {
+                    if (i !== choice - 1) {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
+                    } else {
+                        btn.disabled = true;
+                        btn.style.backgroundColor = '#f5e9eb';
+                        btn.style.color = '#111';
+                        btn.style.boxShadow = '6px 6px 0 #7f1220';
+                        btn.style.transform = 'scale(1.1)';
+                    }
+                });
+
+                if (choice === 1) {
+                    message = "Buuhuu ja ti samo zelim pomoci";
+                } else if (choice === 2) {
+                    message = "Nema na čemu! Samo da ti osmijeh sja.";
+                } else {
+                    message = "vidim ja kako je to";
+                }
+
+                speechBubble.style.transition = 'opacity 0.5s ease';
+                speechBubble.style.opacity = '0';
+
+                setTimeout(() => {
+                    speechBubble.textContent = message;
+                    speechBubble.style.opacity = '1';
+                }, 500);
+            }
+
+        }
+    </script>
+
+</body>
+
+</html>

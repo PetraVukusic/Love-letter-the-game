@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hodnik - Damjan & Petra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0f2160;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            color: #e0e0e0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        #outer-frame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        #inner-content {
+            background: url('Hodnik.jpg') center/cover no-repeat;
+            image-rendering: pixelated;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        #top-section {
+            text-align: center;
+            padding: 20px 10px 10px;
+        }
+
+        #room-description {
+            background: rgba(15, 52, 96, 0.75);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 0 #16213e;
+            box-shadow: 3px 3px 0 #dd1144, inset 1px 1px 0 #dd1144;
+        }
+
+        #inventory {
+            background: rgba(59, 64, 160, 0.85);
+            border-radius: 12px;
+            padding: 10px 20px;
+            max-width: 800px;
+            margin: 10px auto 0;
+            color: #fff;
+            font-size: 0.9rem;
+            box-shadow: inset 1px 1px 0 #ff4d6d;
+        }
+
+        #inventory strong {
+            color: #ff2959;
+        }
+
+        #middle-section {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #clock {
+            position: absolute;
+            right: 5%;
+            top: 40%;
+            transform: translateY(-50%);
+            width: 70px;
+            height: 70px;
+            background: url('Sat.png') center/contain no-repeat;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #clock:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        #clock.taken {
+            display: none;
+        }
+
+        #petra-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 30%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #petra-img {
+            width: 180px;
+            animation: float 3s ease-in-out infinite, sway 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes sway {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(5deg);
+            }
+
+            75% {
+                transform: rotate(-5deg);
+            }
+        }
+
+        #speech-bubble {
+            max-width: 320px;
+            padding: 18px 25px;
+            border-radius: 18px;
+            background-color: #3b40a0de;
+            border: 3px solid #1a1131;
+            box-shadow: 3px 3px 0 #371b1f;
+            font-weight: 700;
+            font-size: 11px;
+            color: white;
+            text-shadow: 1px 1px 0 #7f1220;
+            text-align: center;
+            position: relative;
+        }
+
+        #speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-bottom-color: #e94560;
+            filter: drop-shadow(1px 2px 0 #7f1220);
+        }
+
+        #dialog-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dialog-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #b71c30;
+            padding: 8px 10px;
+            font-family: inherit;
+            font-size: 9px;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 #7f1220;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .dialog-btn:hover {
+            background-color: #ffe6eb;
+            transform: scale(1.05);
+        }
+
+        .dialog-btn:active {
+            transform: scale(0.95);
+            background-color: #ffccd5;
+        }
+
+        .dialog-btn:disabled {
+            background-color: #ccc;
+            color: #666;
+            box-shadow: none;
+        }
+
+        /* Pozicije botuna */
+        .choice-btn {
+            font-family: inherit;
+            font-size: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #e94560;
+            color: white;
+            border: 3px solid #b71c30;
+            box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            cursor: pointer;
+            text-align: center;
+            min-width: 130px;
+            position: absolute;
+            transition: background-color 0.3s, transform 0.15s;
+        }
+
+        .choice-btn:hover {
+            background-color: #ff2959;
+            transform: scale(1.03);
+        }
+
+        .choice-btn:active {
+            background-color: #b71032;
+            transform: scale(0.95);
+        }
+
+        /* Lokacije */
+        #btn-wc {
+            bottom: 20%;
+            left: 10%;
+        }
+
+        #btn-izlaz {
+            top: 20px;
+            left: 20px;
+        }
+
+        #btn-kuhinja {
+            top: 20px;
+            right: 20px;
+        }
+
+        /* Modal */
+        #exit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        #exit-modal .modal-content {
+            background: rgba(15, 52, 96, 0.95);
+            border: 3px solid #b71c30;
+            box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 400px;
+            text-align: center;
+            color: #fff;
+        }
+
+        #exit-modal .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        #exit-modal .modal-btn {
+            font-family: inherit;
+            font-size: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background-color: #e94560;
+            color: white;
+            border: 3px solid #b71c30;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            transition: background-color 0.3s, transform 0.15s;
+        }
+
+        #exit-modal .modal-btn:hover {
+            background-color: #ff2959;
+            transform: scale(1.05);
+        }
+
+        #exit-modal .modal-btn:active {
+            background-color: #b71032;
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<div id="fade-overlay"></div>
+
+<body>
+
+    <div id="outer-frame">
+        <div id="inner-content">
+
+            <div id="top-section">
+                <div id="room-description">
+                    Uff nakon kratkog istezanja uputio si se dalje... Nije loše oprati zube i nešto pojesti. Koliko je
+                    ono sati?
+                </div>
+                <div id="inventory"><strong>Inventar:</strong> <span id="inventory-list">prazan</span></div>
+            </div>
+
+            <div id="middle-section">
+                <div id="clock" role="button" tabindex="0"></div>
+
+                <div id="petra-wrapper">
+                    <img id="petra-img" src="Petrahappy.png" alt="Slika vile Petra" />
+                    <div id="speech-bubble">Opaa što si opasan! Možda i stigneš na predavanja tu i tamo s time. Ha-Ha.
+                    </div>
+                    <div id="dialog-options">
+                        <button class="dialog-btn" onclick="petraReaction(1)">Ha-Ha. :l Zašto si ti još tu?</button>
+                        <button class="dialog-btn" onclick="petraReaction(2)">Tamo ti je prozor.</button>
+                        <button class="dialog-btn" onclick="petraReaction(3)">Ti si kao tu da me paziš?</button>
+                    </div>
+                </div>
+
+                <!-- Novi raspored botuna -->
+                <a id="btn-wc" href="wc.html" class="choice-btn">Idi na WC</a>
+                <a id="btn-kuhinja" href="kuhinja.html" class="choice-btn">Idi u Kuhinju</a>
+                <button id="btn-izlaz" class="choice-btn">Idi prema izlazu</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="exit-modal">
+        <div class="modal-content">
+            <p>Jednom kada izađeš nećeš se više vratiti u kuću.<br>Želiš li nastaviti?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn" id="confirm-exit">Da</button>
+                <button class="modal-btn" id="cancel-exit">Ne</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inventoryList = document.getElementById('inventory-list');
+        const petraWrapper = document.getElementById('petra-wrapper');
+        const dialogOptions = document.getElementById('dialog-options');
+        const speechBubble = document.getElementById('speech-bubble');
+        const clock = document.getElementById('clock');
+        let inventory = [];
+
+        function updateInventory() {
+            inventoryList.textContent = inventory.length ? inventory.join(', ') : 'prazan';
+        }
+
+        function takeClock() {
+            if (!inventory.includes('sat')) {
+                inventory.push('sat'); updateInventory();
+                clock.classList.add('taken');
+                petraWrapper.style.display = 'flex';
+                dialogOptions.style.display = 'flex';
+            }
+        }
+
+        clock.addEventListener('click', takeClock);
+
+        function petraReaction(choice) {
+            const buttons = dialogOptions.querySelectorAll('button');
+            let message = "";
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i !== choice - 1) btn.style.opacity = '0.5';
+                else {
+                    btn.style.backgroundColor = '#f5e9eb';
+                    btn.style.color = '#111';
+                    btn.style.transform = 'scale(1.1)';
+                }
+            });
+            if (choice === 1) message = "Ma ... moram, ne mogu se vratiti bez potvrde.";
+            else if (choice === 2) message = "Ja mogu letit pa nije uvreda...";
+            else message = "Jesam! Satnica mi je 8 eura po satu.";
+            speechBubble.textContent = message;
+        }
+
+        updateInventory();
+
+        // Modal logika
+        const exitBtn = document.getElementById('btn-izlaz');
+        const exitModal = document.getElementById('exit-modal');
+        const confirmExit = document.getElementById('confirm-exit');
+        const cancelExit = document.getElementById('cancel-exit');
+
+        exitBtn.addEventListener('click', () => {
+            exitModal.style.display = 'flex';
+        });
+
+        cancelExit.addEventListener('click', () => {
+            exitModal.style.display = 'none';
+        });
+
+        confirmExit.addEventListener('click', () => {
+            exitModal.style.display = 'none';
+            const fadeOverlay = document.getElementById('fade-overlay');
+            fadeOverlay.classList.add('active');
+
+            setTimeout(() => {
+                window.location.href = 'izlaz.html';
+            }, 1000); // 1s nakon početka fade-outa
+        });
+
+    </script>
+
+</body>
+
+</html>

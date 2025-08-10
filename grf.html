@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GRF - Damjan & Nova cura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0f2160;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        #outer-frame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+            position: relative;
+        }
+
+        #inner-content {
+            position: relative;
+            background-image: url('grfslika.jpg');
+            /* zamijeni svom slikom */
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Crni overlay za fade out i dodatni tekst */
+        #black-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
+            z-index: 1000;
+            display: none;
+        }
+
+        #black-screen.active {
+            opacity: 1;
+            pointer-events: all;
+            display: block;
+        }
+
+        /* Naratorov balon */
+        #narrator-bubble {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 600px;
+            padding: 20px 30px;
+            border-radius: 18px;
+            background-color: #1e3ca3dd;
+            border: 3px solid #dd1144;
+            box-shadow: 3px 3px 0 #7f1220;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            user-select: none;
+            z-index: 15;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            display: none;
+        }
+
+        /* Cura - desno crveni balon */
+        #girl-wrapper {
+            position: absolute;
+            right: 10%;
+            bottom: 20%;
+            max-width: 300px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            z-index: 10;
+        }
+
+        #girl-img {
+            width: 180px;
+            animation: float 3s ease-in-out infinite;
+            border-radius: 8px;
+        }
+
+        #girl-bubble {
+            margin-top: 15px;
+            max-width: 320px;
+            padding: 18px 25px;
+            border-radius: 18px;
+            background-color: #e94560dd;
+            border: 3px solid #7f1220;
+            box-shadow: 3px 3px 0 #7f1220;
+            font-weight: 700;
+            font-size: 11px;
+            color: white;
+            text-shadow: 1px 1px 0 #7f1220;
+            text-align: center;
+            min-height: 60px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        /* Dodatni crveni balon cure za odgovor profesorici */
+        #girl-bubble-after-professor {
+            max-width: 320px;
+            padding: 18px 25px;
+            border-radius: 18px;
+            background-color: #e94560dd;
+            border: 3px solid #7f1220;
+            box-shadow: 3px 3px 0 #7f1220;
+            font-weight: 700;
+            font-size: 11px;
+            color: white;
+            text-shadow: 1px 1px 0 #7f1220;
+            text-align: center;
+            min-height: 60px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            position: fixed;
+            right: 10%;
+            top: 65%;
+            display: none;
+            z-index: 1110;
+            user-select: none;
+        }
+
+        /* Glavni lik - lijevo bijeli balon */
+        #player-bubble {
+            position: absolute;
+            left: 10%;
+            bottom: 20%;
+            max-width: 320px;
+            padding: 25px 30px;
+            border-radius: 18px;
+            background-color: #ffffffdd;
+            border: 3px solid #333;
+            box-shadow: 3px 3px 0 #888;
+            font-weight: 700;
+            font-size: 11px;
+            color: black;
+            text-shadow: 1px 1px 0 #ccc;
+            display: none;
+            min-height: 60px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            user-select: none;
+            z-index: 10;
+        }
+
+        /* Choice buttons container */
+        #dialog-options {
+            margin-top: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 320px;
+            position: absolute;
+            right: 10%;
+            bottom: 10%;
+            user-select: none;
+            z-index: 20;
+        }
+
+        .dialog-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #b71c30;
+            padding: 8px 10px;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 9px;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 #7f1220;
+            transition: background-color 0.2s, transform 0.1s;
+            user-select: none;
+            text-align: center;
+        }
+
+        .dialog-btn:hover {
+            background-color: #ffe6eb;
+            transform: scale(1.05);
+        }
+
+        .dialog-btn:active {
+            transform: scale(0.95);
+            background-color: #ffccd5;
+        }
+
+        .dialog-btn:disabled {
+            background-color: #ccc;
+            border-color: #999;
+            cursor: default;
+            box-shadow: none;
+            color: #666;
+        }
+
+        /* Lebdenje cure */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        /* Balon profesorice na crnom overlayu */
+        #professor-bubble-wrapper {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 600px;
+            padding: 20px 30px;
+            border-radius: 18px;
+            background-color: #1e3ca3dd;
+            border: 3px solid #dd1144;
+            box-shadow: 3px 3px 0 #7f1220;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            user-select: none;
+            z-index: 1100;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            display: none;
+        }
+
+        #professor-bubble-wrapper.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #professor-name {
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-weight: 900;
+            letter-spacing: 2px;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: #dd1144;
+            text-shadow: 2px 2px 0 #7f1220;
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+
+
+            #player-bubble,
+            #dialog-options {
+                max-width: 80vw;
+            }
+
+            #girl-wrapper {
+                right: 5%;
+                max-width: 300px;
+            }
+
+            #player-bubble {
+                left: 5%;
+                max-width: 200px;
+            }
+
+            #dialog-options {
+                right: 5%;
+                bottom: 10%;
+                max-width: 90vw;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .dialog-btn {
+                flex: 1 1 40%;
+                min-width: 120px;
+            }
+
+            #professor-bubble-wrapper {
+                max-width: 90vw;
+                padding: 15px 20px;
+                top: 25%;
+                font-size: 13px;
+            }
+
+            #girl-bubble-after-professor {
+                max-width: 90vw;
+                right: 5%;
+                top: 65%;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html lang="hr">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>GRF - Damjan & Nova cura</title>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+        <style>
+            /* (tvoj postojeći CSS ostaje isti) */
+        </style>
+    </head>
+
+    <body>
+        <div id="outer-frame">
+            <div id="inner-content" role="main" aria-live="polite" aria-atomic="true">
+
+                <!-- Naratorov balon -->
+                <div id="narrator-bubble" aria-live="polite" role="region" aria-label="Opis scene"></div>
+
+                <!-- Cura -->
+                <div id="girl-wrapper" aria-label="Cura koja priča">
+                    <img id="girl-img" src="student.png" alt="Nova cura" />
+                    <div id="girl-bubble" aria-live="polite"></div>
+                </div>
+
+                <!-- Glavni lik -->
+                <div id="player-bubble" aria-live="polite"></div>
+
+                <!-- Opcije dijaloga -->
+                <div id="dialog-options" aria-label="Opcije dijaloga" role="group"></div>
+            </div>
+        </div>
+
+        <!-- Crni overlay za fade out -->
+        <div id="black-screen" aria-hidden="true"></div>
+
+        <!-- Balon profesorice koji se pojavljuje na kraju -->
+        <div id="professor-bubble-wrapper" aria-live="polite" role="region" aria-label="Poruka profesorice">
+            <div id="professor-name">Profesorica</div>
+            <div id="professor-bubble-text"></div>
+        </div>
+
+        <!-- Novi balon cure nakon profesorice -->
+        <div id="girl-bubble-after-professor" aria-live="polite" role="region"
+            aria-label="Poruka cure nakon profesorice">
+            Joj sad bi bilo baš glupo ući, a jbg zakasnili smo.
+        </div>
+
+        <!-- NOVO: izbor nakon zadnjeg balona cure (dodano) -->
+        <div id="final-choice"
+            style="display:none; position:fixed; right:10%; top:78%; z-index:1115; flex-direction:column; gap:8px; max-width:340px;">
+            <button id="final-choice-1" class="dialog-btn">Ima još vremena do sljedećeg predavanja, želiš li u menzu sa
+                mnom?</button>
+            <button id="final-choice-2" class="dialog-btn">Joj šteta, idem samo doma onda.</button>
+        </div>
+
+        <script>
+            const narratorBubble = document.getElementById('narrator-bubble');
+            const girlBubble = document.getElementById("girl-bubble");
+            const playerBubble = document.getElementById("player-bubble");
+            const dialogOptions = document.getElementById("dialog-options");
+            const girlWrapper = document.getElementById("girl-wrapper");
+            const blackScreen = document.getElementById('black-screen');
+            const professorWrapper = document.getElementById('professor-bubble-wrapper');
+            const professorText = document.getElementById('professor-bubble-text');
+            const girlBubbleAfterProf = document.getElementById('girl-bubble-after-professor');
+            const finalChoice = document.getElementById('final-choice');
+            const finalChoice1 = document.getElementById('final-choice-1');
+            const finalChoice2 = document.getElementById('final-choice-2');
+
+            let currentId = null;
+            let typing = false;
+            let waitForChoice = false;
+
+            function typeWriterEffect(text, element, callback) {
+                let i = 0;
+                typing = true;
+                element.textContent = "";
+                element.style.display = "block";
+
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, 30);
+                    } else {
+                        typing = false;
+                        if (callback) callback();
+                    }
+                }
+                type();
+            }
+
+            function showNarratorTexts(texts, index = 0, onComplete) {
+                if (index >= texts.length) {
+                    if (onComplete) onComplete();
+                    return;
+                }
+                narratorBubble.style.display = 'block';
+                typeWriterEffect(texts[index], narratorBubble, () => {
+                    setTimeout(() => {
+                        showNarratorTexts(texts, index + 1, onComplete);
+                    }, 2500);
+                });
+            }
+
+            function getDialogueById(id) {
+                return dialogue.find(d => d.id === id);
+            }
+
+            function showDialogue(id) {
+                const current = getDialogueById(id);
+                if (!current) {
+                    // Kraj dijaloga
+                    girlWrapper.style.display = "none";
+                    girlBubble.style.display = "none";
+                    playerBubble.style.display = "none";
+                    dialogOptions.style.display = "none";
+                    girlBubbleAfterProf.style.display = "none";
+                    blackScreen.style.display = 'block';
+                    setTimeout(() => {
+                        blackScreen.classList.add('active');
+                    }, 100);
+
+                    setTimeout(() => {
+                        professorWrapper.style.display = 'block';
+                        professorWrapper.classList.add('show');
+
+                        const profMsg = "Ako još tko sada uđe, poslat ću ga osobno van. Ne može se ovako kasniti!";
+                        typeWriterEffect(profMsg, professorText, () => {
+                            setTimeout(() => {
+                                girlBubbleAfterProf.style.display = "block";
+                                girlBubbleAfterProf.style.opacity = 0;
+                                let op = 0;
+                                let fadeInterval = setInterval(() => {
+                                    if (op >= 1) {
+                                        clearInterval(fadeInterval);
+                                    } else {
+                                        op += 0.05;
+                                        girlBubbleAfterProf.style.opacity = op;
+                                    }
+                                }, 30);
+
+                                setTimeout(() => {
+                                    finalChoice.style.display = 'flex';
+                                }, 800);
+
+                            }, 2500);
+                        });
+                    }, 1800);
+
+                    return;
+                }
+
+                dialogOptions.innerHTML = "";
+                waitForChoice = false;
+                currentId = id;
+
+                if (current.choices) {
+                    displaySpeakerText(current, () => {
+                        waitForChoice = true;
+                        showChoices(current.choices);
+                    });
+                } else {
+                    displaySpeakerText(current, () => {
+                        let nextId = null;
+                        if (current.id === 10) nextId = 12;
+                        else if (current.id === 11) nextId = 13;
+                        else if (current.id === 12) nextId = 14;
+                        else if (current.id === 13) nextId = 15;
+                        else if (current.id === 14 || current.id === 15) nextId = null;
+                        else nextId = current.id + 1;
+
+                        setTimeout(() => {
+                            showDialogue(nextId);
+                        }, 2000);
+                    });
+                }
+            }
+
+            function displaySpeakerText(dialogueObj, callback) {
+                if (dialogueObj.speaker === "girl") {
+                    playerBubble.style.display = "none";
+                    girlWrapper.style.display = "flex";
+                    girlBubble.style.display = "block";
+                    typeWriterEffect(dialogueObj.text, girlBubble, callback);
+                } else {
+                    girlBubble.style.display = "none";
+                    playerBubble.style.display = "block";
+                    typeWriterEffect(dialogueObj.text, playerBubble, callback);
+                }
+            }
+
+            function showChoices(choices) {
+                dialogOptions.style.display = "flex";
+                choices.forEach(choice => {
+                    const btn = document.createElement("button");
+                    btn.className = "dialog-btn";
+                    btn.textContent = choice.text;
+                    btn.onclick = () => {
+                        dialogOptions.style.display = "none";
+                        showDialogue(choice.id);
+                    };
+                    dialogOptions.appendChild(btn);
+                });
+            }
+
+            // Handler za finalni izbor
+            finalChoice1.addEventListener('click', () => {
+                finalChoice.style.display = 'none';
+                girlBubbleAfterProf.style.display = 'none';
+
+                // Prikaži odgovor igrača
+                playerBubble.style.display = 'block';
+                typeWriterEffect("Ima još vremena do sljedećeg predavanja, želiš li u menzu sa mnom?", playerBubble, () => {
+                    // Nakon što završi tekst igrača, prikaži odgovor cure i onda preusmjeri
+                    playerBubble.style.display = 'none';
+                    girlWrapper.style.display = 'flex';
+                    girlBubble.style.display = 'block';
+
+                    typeWriterEffect("Baš bi voljela ići.", girlBubble, () => {
+                        setTimeout(() => {
+                            window.location.href = 'menza.html';
+                        }, 2000);
+                    });
+                });
+            });
+
+            finalChoice2.addEventListener('click', () => {
+                finalChoice.style.display = 'none';
+                girlBubbleAfterProf.style.display = 'none';
+
+                playerBubble.style.display = 'block';
+                typeWriterEffect("Joj šteta, idem samo doma onda.", playerBubble, () => {
+                    // Možeš nastaviti priču ovdje ako želiš
+                });
+            });
+
+            const dialogue = [
+                {
+                    id: 0,
+                    speaker: "girl",
+                    text: "Hej oprosti kasnim a trebam naci A dvoranu, naš li gdje je?",
+                    choices: [
+                        { id: 10, text: "Da da nebrini." },
+                        { id: 11, text: "Ne znam, nisam odavde.." }
+                    ]
+                },
+                { id: 10, speaker: "player", text: "Da da nebrini." },
+                { id: 11, speaker: "player", text: "Ne znam, nisam ja odavde, hajde bok." },
+                { id: 12, speaker: "girl", text: "Hvala ti, brucoš sam i ne znam gdje je još sta" },
+                { id: 13, speaker: "girl", text: "aha..ok..snacicu se valjda" },
+                { id: 14, speaker: "player", text: "Ja sam isto, i ja tamann idem tamo hajmo skupa." },
+                { id: 15, speaker: "player", text: "U redu, sretno!" }
+            ];
+
+            // Pokreni početni narator
+            showNarratorTexts([
+                "Ulaziš u zgradu i odma primjetiš nekoga",
+                "Neka cura panicno maršira s kata na kat tražeći ocito nešto",
+                "Lakne joj kada te ugleda, prilazi ti, nisi je prije vidio"
+            ], 0, () => {
+                showDialogue(0);
+            });
+        </script>
+    </body>
+
+    </html>
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Damjan & Petra - Početak igre</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        /* Reset i osnovni stilovi */
+        * {
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            background: url('indexpozadina.jpg') no-repeat center center fixed;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Press Start 2P', cursive, monospace, sans-serif;
+
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            overflow: hidden;
+            color: #f0f0f0;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #start-container {
+            background: rgba(20, 33, 68, 0.9);
+            border-radius: 20px;
+            padding: 40px 60px;
+            box-shadow:
+                0 0 20px rgba(255, 255, 255, 0.1),
+                inset 0 0 10px rgba(255, 255, 255, 0.15);
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+        }
+
+        #start-container h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #ac1515;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            user-select: text;
+        }
+
+        #description {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            color: #d0d9f8;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+            user-select: text;
+        }
+
+        #start-btn {
+            background: linear-gradient(135deg, #5383e8, #72a5f7);
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 900;
+            padding: 15px 45px;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(83, 131, 232, 0.6);
+            transition: all 0.3s ease;
+            user-select: none;
+            letter-spacing: 1.2px;
+        }
+
+        #start-btn:hover {
+            background: linear-gradient(135deg, #7a1010, #5383e8);
+            box-shadow: 0 8px 25px rgba(96, 151, 239, 0.9);
+            transform: scale(1.05);
+        }
+
+        #start-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(83, 131, 232, 0.4);
+        }
+
+        /* Podnožje sa opcijama */
+        #footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #a0b1d9;
+            font-size: 0.75rem;
+            user-select: none;
+        }
+
+        /* Switch za zvuk */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+            margin-bottom: 20px;
+            vertical-align: middle;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 13px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #62a1f4;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Label za switch */
+        #sound-label {
+            font-size: 0.8rem;
+            margin-left: 10px;
+            vertical-align: middle;
+            color: #b0bfea;
+            user-select: none;
+        }
+
+        /* Tutorial box */
+        #tutorial {
+            background: rgba(40, 57, 98, 0.85);
+            padding: 15px 20px;
+            margin-top: 25px;
+            border-radius: 15px;
+            color: #c0cee9;
+            font-size: 0.75rem;
+            line-height: 1.3;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+            text-align: left;
+            max-height: 130px;
+            overflow-y: auto;
+            user-select: text;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            #start-container {
+                padding: 30px 25px;
+            }
+
+            #start-container h1 {
+                font-size: 1.8rem;
+            }
+
+            #start-btn {
+                font-size: 1.1rem;
+                padding: 12px 35px;
+            }
+
+            #tutorial {
+                font-size: 0.7rem;
+                max-height: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main id="start-container" role="main" aria-label="Početni ekran igre Damjan i Petra">
+        <h1> Love letter the video game</h1>
+        <p id="description">
+            Uđi u svijet Damjanovog zivota, sjajna interaktivna priča prepuna smijeha, izazova i nepredvidivih
+            trenutaka.
+            Upoznaj likove, donesi odluke i doživi jedinstveno iskustvo kroz ovu retro-stiliranu priču.
+            Jesi li spreman za avanturu?
+        </p>
+
+        <label class="switch" for="sound-toggle" tabindex="0" aria-label="Uključi ili isključi zvuk igre">
+            <input type="checkbox" id="sound-toggle" />
+            <span class="slider"></span>
+        </label><span id="sound-label">Zvuk: Isključen (zvuka svakao nema oprosti)</span>
+
+        <button id="start-btn" aria-label="Pokreni igru">Start Game</button>
+
+        <section id="tutorial" aria-label="Upute za igru" tabindex="0">
+            <strong>Kako igrati:</strong>
+            <ul>
+                <li>Klikni na komentare kako bi nastavio priču.</li>
+                <li>Biraj odgovore i oblikuj priču.</li>
+                <li>Uživaj u pixel art i retro zvucima.</li>
+                <li>Prati naratorove upute i uživaj u atmosferi.</li>
+            </ul>
+        </section>
+    </main>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const soundToggle = document.getElementById('sound-toggle');
+        const soundLabel = document.getElementById('sound-label');
+
+        // Simulirana kontrola zvuka, možeš povezati sa zvukovima igre
+        soundToggle.addEventListener('change', () => {
+            if (soundToggle.checked) {
+                soundLabel.textContent = 'Zvuk: Uključen';
+                // ovdje možeš startati glazbu ili zvukove
+            } else {
+                soundLabel.textContent = 'Zvuk: Isključen';
+                // ovdje možeš pauzirati glazbu ili zvukove
+            }
+        });
+
+        startBtn.addEventListener('click', () => {
+            window.location.href = 'spavaca_soba.html';
+        });
+    </script>
+</body>
+
+</html>

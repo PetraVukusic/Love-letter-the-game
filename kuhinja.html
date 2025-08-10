@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kuhinja - Damjan & Petra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0f2160;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            color: #e0e0e0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:focus,
+        button:focus {
+            outline: 3px solid #ff2959;
+            outline-offset: 2px;
+        }
+
+        #outer-frame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        #inner-content {
+            background-image: url('Kuhinja.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            image-rendering: pixelated;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            padding: 20px;
+        }
+
+        #top-section {
+            text-align: center;
+            padding: 10px 20px 0;
+            min-height: 60px;
+            background: rgba(15, 52, 96, 0.75);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 10px auto;
+            text-shadow: 1px 1px 0 #16213e;
+            box-shadow: 3px 3px 0 #dd1144, inset 1px 1px 0 #dd1144;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        #middle-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Gumb pojedi nešto - usklađen s ostalim choice-btn stilom */
+        #eat-something-btn {
+            min-width: 160px;
+            padding: 12px 16px;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 10px;
+            background-color: #e94560;
+            color: white;
+            border: 3px solid #b71c30;
+            border-radius: 8px;
+            box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.15s;
+            animation: button-pop 0.4s ease-out;
+        }
+
+        #eat-something-btn:hover:not(:disabled),
+        #eat-something-btn:focus:not(:disabled) {
+            background-color: #ff2959;
+            box-shadow: 4px 4px 0 #a71339, inset 1px 1px 0 #ff6d83;
+            transform: scale(1.05);
+        }
+
+        #eat-something-btn:active:not(:disabled) {
+            transform: scale(0.95);
+            background-color: #b71032;
+        }
+
+        #eat-something-btn:disabled {
+            background-color: #a83b4a;
+            cursor: default;
+            transform: none;
+            box-shadow: 4px 4px 0 #5c0d18;
+        }
+
+        @keyframes button-pop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #petra-wrapper {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            max-width: 320px;
+            position: relative;
+
+            padding: 15px;
+            border-radius: 15px;
+
+            transition: opacity 0.6s ease;
+            opacity: 1;
+        }
+
+        #petra-wrapper.hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none !important;
+        }
+
+        #petra-img {
+            width: 180px;
+            animation: float 3s ease-in-out infinite, sway 4s ease-in-out infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes sway {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(5deg);
+            }
+
+            75% {
+                transform: rotate(-5deg);
+            }
+        }
+
+        #speech-bubble {
+            max-width: 320px;
+            padding: 18px 25px;
+            border-radius: 18px;
+            background-color: #3b40a0de;
+            border: 3px solid #1a1131;
+            box-shadow: 3px 3px 0 #371b1f;
+            font-weight: 700;
+            font-size: 11px;
+            color: white;
+            text-shadow: 1px 1px 0 #7f1220;
+            text-align: center;
+            position: relative;
+            user-select: none;
+        }
+
+        #speech-bubble strong {
+            color: #ff695e;
+            text-shadow: 1px 1px 2px #a71339;
+        }
+
+        #dialog-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .dialog-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #b71c30;
+            padding: 8px 10px;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 9px;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0 #7f1220;
+            transition: background-color 0.2s, transform 0.1s;
+            user-select: none;
+        }
+
+        .dialog-btn:hover {
+            background-color: #ffe6eb;
+            transform: scale(1.05);
+        }
+
+        .dialog-btn:active {
+            transform: scale(0.95);
+            background-color: #ffccd5;
+        }
+
+        #bottom-buttons {
+            display: flex;
+            width: 100%;
+            padding: 20px 30px;
+            justify-content: flex-start;
+        }
+
+        .choice-btn.left-btn {
+            min-width: 130px;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #e94560;
+            color: white;
+            border: 3px solid #b71c30;
+            box-shadow: 4px 4px 0 #7f1220, inset 1px 1px 0 #ff4d6d;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.15s;
+        }
+
+        .choice-btn.left-btn:hover {
+            background-color: #ff2959;
+            box-shadow: 4px 4px 0 #a71339, inset 1px 1px 0 #ff6d83;
+            transform: scale(1.03);
+        }
+
+        .choice-btn.left-btn:active {
+            transform: scale(0.95);
+            box-shadow: none;
+            background-color: #b71032;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="outer-frame">
+        <div id="inner-content">
+            <div id="top-section">
+                <div id="room-description"></div>
+            </div>
+
+            <div id="middle-section">
+                <div id="petra-wrapper">
+                    <img id="petra-img" src="Petrahappy.png" alt="Slika vile Petra" />
+                    <div id="speech-bubble"></div>
+                    <div id="dialog-options"></div>
+                </div>
+
+                <button id="eat-something-btn" disabled style="display:none;">Pojedi nešto</button>
+            </div>
+
+            <div id="bottom-buttons">
+                <a href="hodnik.html" class="choice-btn left-btn">Vrati se u hodnik</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function typeWriterEffect(text, elementId, speed, callback) {
+            let i = 0;
+            const el = document.getElementById(elementId);
+            el.textContent = "";
+            function type() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        window.onload = () => {
+            const eatBtn = document.getElementById('eat-something-btn');
+            const petraWrapper = document.getElementById('petra-wrapper');
+            const petraImg = document.getElementById('petra-img');
+            const speechBubble = document.getElementById('speech-bubble');
+            const dialogOptions = document.getElementById('dialog-options');
+
+            const introText = "Čuješ kako ti se stomak buni, nešto bi valjalo prigristi";
+
+            typeWriterEffect(introText, "room-description", 40, () => {
+                eatBtn.disabled = false;
+                eatBtn.style.display = 'inline-block';
+            });
+
+            let stage = 0;
+
+            eatBtn.addEventListener('click', () => {
+                if (stage === 0) {
+                    eatBtn.style.display = 'none';
+                    petraWrapper.style.display = 'flex';
+                    speechBubble.innerHTML = 'Jao da je tako lako, idem ti naći nešto...';
+
+                    setTimeout(() => {
+                        petraWrapper.classList.add('hidden');
+                        setTimeout(() => {
+                            petraWrapper.classList.remove('hidden');
+                            petraImg.src = 'dvopek.png';
+                            speechBubble.textContent = 'Evo završila sam malo s zujenjem. Imam dvopek!';
+                            dialogOptions.innerHTML = `
+                                <button class="dialog-btn" onclick="petraReaction(1)">Bolje ista nego nista</button>
+                                <button class="dialog-btn" onclick="petraReaction(2)">Hvala, Petra!</button>
+                                <button class="dialog-btn" onclick="petraReaction(3)">Nisam gladan.</button>
+                            `;
+                            dialogOptions.style.display = 'flex';
+                        }, 700);
+                        stage = 1;
+                    }, 2300);
+                }
+            });
+
+            window.petraReaction = function (choice) {
+                const buttons = dialogOptions.querySelectorAll('button');
+                let message = "";
+
+                buttons.forEach((btn, i) => {
+                    if (i !== choice - 1) {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
+                    } else {
+                        btn.disabled = true;
+                        btn.style.backgroundColor = '#f5e9eb';
+                        btn.style.color = '#111';
+                        btn.style.boxShadow = '6px 6px 0 #7f1220';
+                        btn.style.transform = 'scale(1.1)';
+                    }
+                });
+
+                if (choice === 1) {
+                    message = "Bolje dvopek u ruci nego vrabac na grani... kako vec ide..";
+                } else if (choice === 2) {
+                    message = "Nema na čemu, ovaj posao je dosta lagan.";
+                } else {
+                    message = "Ha dobro, srećom barem dvopek moze cekati.";
+                }
+
+                speechBubble.style.transition = 'opacity 0.5s ease';
+                speechBubble.style.opacity = '0';
+
+                setTimeout(() => {
+                    speechBubble.textContent = message;
+                    speechBubble.style.opacity = '1';
+                }, 500);
+            }
+        }
+    </script>
+</body>
+
+</html>

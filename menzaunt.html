@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GRF - Menza scena za stolom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: #0f206000 url('menzaunt.jpg') no-repeat center center/cover;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            color: #e0e0e0;
+            user-select: none;
+            position: relative;
+        }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 11, 50, 0);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 80px;
+            pointer-events: none;
+        }
+
+        #dialog-container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        /* Lijevi balon - Damjan */
+        #damjan-wrapper {
+            max-width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            user-select: none;
+        }
+
+        #damjan-bubble {
+            background: #ffffffdd;
+            color: black;
+            border: 3px solid #333;
+            padding: 25px 30px;
+            border-radius: 18px;
+            box-shadow: 3px 3px 0 #888;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1.3;
+            white-space: pre-wrap;
+            min-height: 70px;
+            max-width: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            display: none;
+            position: relative;
+            z-index: 11;
+        }
+
+        #damjan-name {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #dd7000;
+            text-shadow: 2px 2px 0 #442200;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        /* Desni balon - Cura */
+        #cura-wrapper {
+            max-width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            user-select: none;
+        }
+
+        #cura-bubble {
+            background: #e94560dd;
+            border: 3px solid #7f1220;
+            padding: 18px 25px;
+            border-radius: 18px;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1.3;
+            white-space: pre-wrap;
+            min-height: 70px;
+            max-width: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            display: none;
+            position: relative;
+            z-index: 11;
+            text-shadow: 1px 1px 0 #7f1220;
+        }
+
+        #cura-name {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #e94560;
+            text-shadow: 2px 2px 0 #7f1220;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        /* Narator u sredini ispod */
+        #narrator-bubble {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 700px;
+            background-color: #1e3ca3d7;
+            border: 3px solid #dd1144;
+            box-shadow: 3px 3px 0 #7f1220;
+            padding: 20px 30px;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            color: white;
+            border-radius: 18px;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 0.7s ease-in-out;
+            z-index: 20;
+            display: none;
+        }
+
+        /* Crni fullscreen overlay za fade out na kraju */
+        #black-screen {
+            position: fixed;
+            inset: 0;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
+            z-index: 30;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+        }
+
+        #black-screen.active {
+            opacity: 1;
+            pointer-events: all;
+            display: flex;
+        }
+
+        #btn-home {
+            margin-top: 25px;
+            padding: 15px 30px;
+            border: 3px solid #dd1144;
+            background-color: rgba(221, 17, 68, 0.8);
+            color: white;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-size: 11px;
+            font-weight: 900;
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 3px 3px 0 #7f1220;
+            transition: background-color 0.3s ease;
+        }
+
+        #btn-home:hover {
+            background-color: #dd1144;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="overlay" aria-live="polite" aria-atomic="true" role="main">
+        <div id="dialog-container">
+            <div id="damjan-wrapper" aria-label="Govori Damjan">
+                <div id="damjan-name">Damjan</div>
+                <div id="damjan-bubble"></div>
+            </div>
+            <div id="cura-wrapper" aria-label="Govori cura">
+                <div id="cura-name">Cura</div>
+                <div id="cura-bubble"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="narrator-bubble" role="region" aria-label="Naratorova poruka"></div>
+
+    <div id="black-screen" aria-hidden="true">
+        <div>To je za sljedeću epizodu...</div>
+        <button id="btn-home">Back to home screen</button>
+    </div>
+
+    <script>
+        const damjanName = document.getElementById('damjan-name');
+        const damjanBubble = document.getElementById('damjan-bubble');
+        const curaName = document.getElementById('cura-name');
+        const curaBubble = document.getElementById('cura-bubble');
+        const narratorBubble = document.getElementById('narrator-bubble');
+        const blackScreen = document.getElementById('black-screen');
+        const btnHome = document.getElementById('btn-home');
+
+        let dialogue = [
+            { speaker: 'damjan', text: "*damjan se okrene oko sebe i ugleda stol iza njega*" },
+            { speaker: 'damjan', text: " * Nagne se curi i tiho kaže:* Znaš, ovi radnici iz menze su preslatki u ovim bijelim kutama." },
+            { speaker: 'cura', text: "Haha, Bas jesu, izgledaju kao mali znanstvenici!" },
+            { speaker: 'damjan', text: "Tko zna o čemu pričaju, možda o omjeru soli u juhi?" },
+            { speaker: 'cura', text: "Dada lol, kad smo kod hrane ova manistra koju jedemo je bas cudna, radili su neke lude kombinacije okusa" },
+            { speaker: 'damjan', text: "To je to! To su ti smislili ovi znanstvenici iz menze" },
+            { speaker: 'damjan', text: "Bas eksperimentiraju tamo u kuhinji" },
+            { speaker: 'cura', text: "gahahahah bass" },
+            { speaker: 'narrator', text: "Vas dvoje tako slatki se nastavili razgovarati" },
+            { speaker: 'damjan', text: "Ejj znaš sto... razmišljao sao i bili htjela samnom u kino u pon...?" }
+        ];
+
+        let currentIndex = 0;
+
+        function fadeIn(elem, displayStyle = 'block') {
+            elem.style.opacity = 0;
+            elem.style.display = displayStyle;
+            let op = 0;
+            function step() {
+                op += 0.05;
+                if (op >= 1) {
+                    elem.style.opacity = 1;
+                } else {
+                    elem.style.opacity = op;
+                    requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        function fadeOut(elem) {
+            let op = 1;
+            function step() {
+                op -= 0.05;
+                if (op <= 0) {
+                    elem.style.opacity = 0;
+                    elem.style.display = "none";
+                } else {
+                    elem.style.opacity = op;
+                    requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        function typeWriterEffect(text, element, callback) {
+            let i = 0;
+            element.textContent = "";
+            element.style.display = "block";
+            element.style.opacity = 1;
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, 30);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        function showNextDialogue() {
+            if (currentIndex >= dialogue.length) {
+                // Završetak: sakrij balone i imena, stavi crni overlay s gumbom
+                fadeOut(damjanBubble);
+                fadeOut(curaBubble);
+                fadeOut(damjanName);
+                fadeOut(curaName);
+                fadeOut(narratorBubble);
+
+                setTimeout(() => {
+                    fadeIn(blackScreen, 'flex');
+                }, 800);
+                return;
+            }
+
+            const d = dialogue[currentIndex];
+            currentIndex++;
+
+            // Sakrij sve balone i imena da se prikaže samo aktivni
+            damjanBubble.style.display = 'none';
+            curaBubble.style.display = 'none';
+            damjanName.style.opacity = 0;
+            curaName.style.opacity = 0;
+            narratorBubble.style.display = 'none';
+
+            switch (d.speaker) {
+                case 'damjan':
+                    fadeIn(damjanName, 'block');
+                    fadeIn(damjanBubble, 'block');
+                    typeWriterEffect(d.text, damjanBubble, () => {
+                        setTimeout(showNextDialogue, 1800);
+                    });
+                    break;
+
+                case 'cura':
+                    fadeIn(curaName, 'block');
+                    fadeIn(curaBubble, 'block');
+                    typeWriterEffect(d.text, curaBubble, () => {
+                        setTimeout(showNextDialogue, 1800);
+                    });
+                    break;
+
+                case 'narrator':
+                    fadeIn(narratorBubble, 'block');
+                    typeWriterEffect(d.text, narratorBubble, () => {
+                        setTimeout(showNextDialogue, 2500);
+                    });
+                    break;
+            }
+        }
+
+        btnHome.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        window.onload = () => {
+            damjanName.style.opacity = 0;
+            curaName.style.opacity = 0;
+            damjanBubble.style.display = 'none';
+            curaBubble.style.display = 'none';
+            narratorBubble.style.display = 'none';
+            blackScreen.style.display = 'none';
+            blackScreen.style.opacity = 0;
+            showNextDialogue();
+        };
+    </script>
+
+</body>
+
+</html>

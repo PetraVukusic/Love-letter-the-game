@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spavaća soba - Damjan & Petra</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <!-- Crni overlay za fade-in efekt -->
+    <div id="black-screen"></div>
+
+    <div id="outer-frame">
+        <div id="inner-content">
+            <div id="top-section">
+                <div id="room-description"></div>
+            </div>
+
+            <div id="middle-section">
+                <div class="petra-wrapper">
+                    <img id="petra-img" src="Petraconf.png" alt="Slika vile Petra" />
+                    <div id="speech-bubble" aria-live="polite">
+                        Ovo mi zvuči kao neki loš uvod u kojekakav anime dating simulator... Kasniš u školu? Baš si
+                        klišej.
+                    </div>
+                    <div id="dialog-options">
+                        <button class="dialog-btn" onclick="petraReaction(1)">wtf tko si ti- mislim što si ti?</button>
+                        <button class="dialog-btn" onclick="petraReaction(2)">Što radiš u mojoj kući?! Mici se moram na
+                            predavanje</button>
+                        <button class="dialog-btn" onclick="petraReaction(3)">AAA</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bottom-buttons">
+                <a href="hodnik.html" class="choice-btn left-btn" role="button">Izađi u hodnik</a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => {
+            const blackScreen = document.getElementById("black-screen");
+            const topSection = document.getElementById("top-section");
+            const middleSection = document.getElementById("middle-section");
+            const bottomButtons = document.getElementById("bottom-buttons");
+            const roomDescription = document.getElementById("room-description");
+            const petraImg = document.getElementById("petra-img");
+
+            // Sakrij sve osim black-screen i pozadine na početku
+            topSection.style.display = "none";
+            middleSection.style.display = "none";
+            bottomButtons.style.display = "none";
+
+            // Ukloni sliku Petre sa ekrana ili sakrij je na početku
+            petraImg.style.opacity = 0;
+
+            // Fade out crnog ekrana
+            blackScreen.classList.add("fade-out");
+
+            setTimeout(() => {
+                blackScreen.style.display = "none";
+
+                // Prikaži top-section (gdje je tekst) bez ikakvih ostalih elemenata
+                topSection.style.display = "block";
+                middleSection.style.display = "none";
+                bottomButtons.style.display = "none";
+
+                // Pokreni typewriter efekt s tekstom
+                const typeText = "Probudio si se u Zagrebu, joj kako divno jutro! Ali cekaj koji je ono dan?";
+                typeWriterEffect(typeText, "room-description", 40, () => {
+                    // Kada završi ispis teksta, fade-in animiraj sliku Petre
+
+                    fadeInElement(petraImg, 1000, () => {
+                        // Nakon što se slika pojavi, fade-out tekst
+
+                        fadeOutElement(roomDescription, 800, () => {
+                            // Sakrij top-section jer nema sadržaja
+                            topSection.style.display = "none";
+
+                            // Prikaži ostale elemente sa fade-in animacijom
+                            middleSection.style.display = "flex";
+                            bottomButtons.style.display = "flex";
+
+                            fadeInElement(middleSection, 800);
+                            fadeInElement(bottomButtons, 800);
+                        });
+                    });
+                });
+            }, 2000);
+        };
+
+        // Funkcija typewriter kao prije
+        function typeWriterEffect(text, elementId, speed, callback) {
+            let i = 0;
+            const el = document.getElementById(elementId);
+            el.textContent = "";
+            function type() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        // Pomoćne funkcije za fade-in i fade-out koristeći CSS opacity i transition
+        function fadeInElement(element, duration = 500, callback) {
+            element.style.transition = `opacity ${duration}ms ease-in-out`;
+            element.style.opacity = 0;
+            element.style.display = getDefaultDisplay(element);
+            // slight delay za pokretanje transition
+            setTimeout(() => {
+                element.style.opacity = 1;
+            }, 20);
+            if (callback) {
+                setTimeout(callback, duration);
+            }
+        }
+
+        function fadeOutElement(element, duration = 500, callback) {
+            element.style.transition = `opacity ${duration}ms ease-in-out`;
+            element.style.opacity = 1;
+            setTimeout(() => {
+                element.style.opacity = 0;
+            }, 20);
+            if (callback) {
+                setTimeout(() => {
+                    element.style.display = "none";
+                    callback();
+                }, duration);
+            }
+        }
+
+        // Pomaže da se sačuva inicijalni display vrijednost elementa
+        function getDefaultDisplay(element) {
+            const tag = element.tagName.toLowerCase();
+            const displayDefaults = {
+                div: "block",
+                img: "inline-block",
+                a: "inline-block",
+                button: "inline-block",
+                span: "inline",
+            };
+            return displayDefaults[tag] || "block";
+        }
+
+        function petraReaction(choice) {
+            const bubble = document.getElementById('speech-bubble');
+            const dialogOptions = document.getElementById('dialog-options');
+            const buttons = dialogOptions.querySelectorAll('button');
+
+            // Poruke po izboru
+            let message = "";
+            if (choice === 1) {
+                message = "Ja sam pčela Pero! poslana sam paziti na tebe, ne boj se dolazim u miru!";
+            } else if (choice === 2) {
+                message = "Ušla sam kroz prozor... Ja sam pčela Pero... Ako te briga uopće... maknut ću ti se s puta.";
+            } else if (choice === 3) {
+                message = "AAAAA...... nemoj me tako plašiti... ne brini ja sam pčela Pero i poslana sam da te pazim.";
+            }
+
+            // Sakrij ostale gumbe osim odabranog s fade-out animacijom
+            buttons.forEach((btn, idx) => {
+                if (idx !== (choice - 1)) {
+                    btn.style.transition = 'opacity 0.5s ease';
+                    btn.style.opacity = '0';
+                    setTimeout(() => { btn.style.display = 'none'; }, 500);
+                }
+            });
+
+            // Povećaj i stiliziraj odabrani gumb, onemogući daljnje klikanje
+            let selectedBtn = buttons[choice - 1];
+            selectedBtn.classList.add('selected-dialog-btn');
+            selectedBtn.disabled = true;
+
+            // Sakrij govorni balon Petre (fade out)
+            bubble.style.transition = 'opacity 0.5s ease';
+            bubble.style.opacity = '0';
+
+            setTimeout(() => {
+                bubble.style.display = 'none';
+
+                // Prikaži novi tekst u govornom balonu (isti element)
+                bubble.textContent = message;
+                bubble.style.display = 'block';
+                bubble.style.opacity = '0';
+
+                // Stiliziraj balon kao veći za reakciju
+                bubble.style.fontSize = '1.2rem';
+                bubble.style.padding = '20px 30px';
+                bubble.style.maxWidth = '400px';
+                bubble.style.transition = 'opacity 0.5s ease';
+
+                setTimeout(() => {
+                    bubble.style.opacity = '1';
+                }, 20);
+            }, 500);
+        }
+
+    </script>
+</body>
+
+</html>

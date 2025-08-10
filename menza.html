@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GRF - Menza scena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            background: black;
+            color: #eee;
+            user-select: none;
+        }
+
+        /* VIDEO POZADINA */
+        #video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            filter: brightness(0.5);
+            background: black;
+        }
+
+        #outer-frame {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+            /* transparent background so video is visible */
+            background: transparent;
+        }
+
+        #inner-content {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            height: 100%;
+            color: white;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* BALONI */
+        .bubble {
+            max-width: 350px;
+            padding: 18px 25px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 11px;
+            line-height: 1.3;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            color: white;
+            text-shadow: 1px 1px 0 #7f1220;
+            user-select: none;
+            box-shadow: 3px 3px 0 #7f1220;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        /* pozicije balona i likova */
+        #narrator-bubble {
+            background-color: #1e3ca3d7;
+            border: 3px solid #dd1144;
+            max-width: 700px;
+            padding: 20px 30px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 auto 20px;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            user-select: none;
+            z-index: 20;
+        }
+
+        #damjan-bubble {
+            position: absolute;
+            left: 10%;
+            bottom: 20%;
+            max-width: 320px;
+            padding: 25px 30px;
+            border-radius: 18px;
+            background-color: #ffffffdd;
+            border: 3px solid #333;
+            box-shadow: 3px 3px 0 #888;
+            font-weight: 700;
+            font-size: 11px;
+            color: black;
+            text-shadow: 1px 1px 0 #ccc;
+            display: none;
+            min-height: 60px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            user-select: none;
+            z-index: 10;
+        }
+
+        #petra-wrapper {
+            position: absolute;
+            right: 10%;
+            bottom: 10%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 20;
+        }
+
+        #petra-img {
+            width: 180px;
+            border-radius: 15px;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(2px 4px 1px rgba(0, 0, 0, 0.4));
+        }
+
+        #petra-bubble {
+            background-color: #e94560dd;
+            border: 3px solid #7f1220;
+            padding: 18px 25px;
+            margin-top: 12px;
+            border-radius: 18px;
+            color: white;
+            font-weight: 700;
+            font-size: 11px;
+            text-shadow: 1px 1px 0 #7f1220;
+            min-height: 70px;
+            max-width: 320px;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        /* FLOAT ANIMACIJA */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        /* OPIS ISPOD damjanA (ime i narančasti label) */
+        #damjan-name {
+            position: absolute;
+            left: 10%;
+            bottom: 28%;
+            color: #dd7000;
+            font-weight: 900;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 #442200;
+            user-select: none;
+            z-index: 21;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            width: 300px;
+            pointer-events: none;
+        }
+
+        /* OPIS ISPRED PETRE */
+        #petra-name {
+            font-family: 'Press Start 2P', monospace, sans-serif;
+            font-weight: 900;
+            letter-spacing: 2px;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: #dd1144;
+            text-shadow: 2px 2px 0 #7f1220;
+            user-select: none;
+        }
+
+        /* WEAK TEXT for narrator small */
+        .small-text {
+            font-size: 9px;
+            opacity: 0.5;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+
+<body>
+    <video id="video-bg" autoplay muted loop playsinline src="hodanjemenza.mp4"></video>
+
+    <div id="outer-frame" role="main" aria-live="polite" aria-atomic="true">
+        <div id="inner-content">
+
+            <!-- Narator -->
+            <div id="narrator-bubble" role="region" aria-label="Naratorova poruka" aria-live="polite"
+                aria-atomic="true"></div>
+
+            <!-- damjan (pojednostavljeno kao bijeli balon lijevo) -->
+            <div id="damjan-name">Damjan</div>
+            <div id="damjan-bubble" aria-live="polite" aria-atomic="true" role="region" aria-label="izjava damjan">
+            </div>
+
+            <!-- Petra vila -->
+            <div id="petra-wrapper" aria-label="Petra vila koja priča">
+                <img id="petra-img" src="Petrahappy.png" alt="Petra vila" />
+                <div id="petra-bubble" aria-live="polite" role="region" aria-label="govor Petre"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const narratorBubble = document.getElementById('narrator-bubble');
+        const damjanBubble = document.getElementById('damjan-bubble');
+        const damjanName = document.getElementById('damjan-name');
+        const petraWrapper = document.getElementById('petra-wrapper');
+        const petraBubble = document.getElementById('petra-bubble');
+
+        // Helpers
+        function typeWriterEffect(text, element, callback) {
+            let i = 0;
+            element.textContent = "";
+            element.style.opacity = "1";
+            element.style.display = "block";
+
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, 30);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        function fadeIn(elem, duration = 600) {
+            elem.style.opacity = 0;
+            elem.style.display = "block";
+            let op = 0;
+            const step = 50 / duration;
+            function fade() {
+                op += step;
+                if (op >= 1) {
+                    elem.style.opacity = 1;
+                } else {
+                    elem.style.opacity = op;
+                    requestAnimationFrame(fade);
+                }
+            }
+            fade();
+        }
+
+        function fadeOut(elem, duration = 400) {
+            let op = 1;
+            const step = 50 / duration;
+            function fade() {
+                op -= step;
+                if (op <= 0) {
+                    elem.style.opacity = 0;
+                    elem.style.display = "none";
+                } else {
+                    elem.style.opacity = op;
+                    requestAnimationFrame(fade);
+                }
+            }
+            fade();
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Story flow async & sequential
+        async function runScene() {
+            // 1. Narator krene govoriti
+            fadeIn(narratorBubble);
+            await new Promise(res => typeWriterEffect("Vidjelo se na curinom licu da joj je bilo drago što si pitao.", narratorBubble, res));
+            await delay(2500);
+            fadeOut(narratorBubble);
+
+            // 2. damjan govori (bijeli balon lijevo)
+            fadeIn(damjanName);
+            await delay(350);
+            fadeIn(damjanBubble);
+            await new Promise(res => typeWriterEffect("Woah idem u menzu s njom...", damjanBubble, res));
+            await delay(2500);
+            fadeOut(damjanBubble);
+            fadeOut(damjanName);
+
+            // 3. Pojavljuje se Petra vila (desno) s ulaznom animacijom (fade in + float)
+            fadeIn(petraWrapper);
+            await delay(700);
+
+            // Petra dijalog 1
+            await new Promise(res => typeWriterEffect("Ej, opet ja, i nebrini", petraBubble, res));
+            await delay(1800);
+
+            // Petra dijalog 2 (nastavak nakon tvojih dijaloga u pitanju)
+            await new Promise(res => typeWriterEffect("Samo ti me možeš vidjeti, cura neće.", petraBubble, res));
+            await delay(1600);
+
+            // Izraz šale
+            await new Promise(res => typeWriterEffect("Ha ha, jese bojiš da ću ti uništiti šanse s ovim komadom? lol", petraBubble, res));
+            await delay(1800);
+
+            // Likov odgovor (najbolje prikazan kao damjan, bijeli balon lijevo)
+            fadeOut(petraBubble);
+            fadeOut(petraWrapper);
+            fadeIn(damjanName);
+            fadeIn(damjanBubble);
+            await new Promise(res => typeWriterEffect("Da, molit cu da nas neometas", damjanBubble, res));
+            await delay(1500);
+
+            // Fade out svi baloni i imena dok se ide dalje
+            fadeOut(damjanBubble);
+            fadeOut(damjanName);
+
+            // Pauza i prelazak dalje
+            await delay(1200);
+
+            // Prelazak na sljedeću stranicu
+            window.location.href = "menzaunt.html";
+        }
+
+        window.onload = () => {
+            // sakrij sve osim videa prije starta
+            narratorBubble.style.display = "none";
+            damjanBubble.style.display = "none";
+            damjanName.style.display = "none";
+            petraWrapper.style.display = "none";
+            petraBubble.style.display = "none";
+
+            runScene();
+        };
+    </script>
+</body>
+
+</html>
